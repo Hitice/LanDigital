@@ -1,0 +1,38 @@
+# Firebase App Hosting — configuração do servidor (Next.js 16 com SSR + API routes).
+# Docs: https://firebase.google.com/docs/app-hosting/configure
+
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0          # 0 = escala a zero (economiza, mas tem cold start)
+  maxInstances: 2
+  concurrency: 80
+
+# Variáveis não sensíveis vão com "value". Segredos vão com "secret" (Secret Manager).
+env:
+  # Públicas / de runtime
+  - variable: ASAAS_BASE_URL
+    value: https://api.asaas.com/v3
+    availability: [RUNTIME]
+
+  - variable: AUTH_TRUST_HOST   # necessário p/ Auth.js atrás de proxy (Cloud Run)
+    value: "true"
+    availability: [RUNTIME]
+
+  # Segredos (crie no Secret Manager antes — veja README abaixo)
+  - variable: ANTHROPIC_API_KEY
+    secret: anthropic-api-key
+  - variable: AUTH_SECRET
+    secret: auth-secret
+  - variable: AUTH_GOOGLE_ID
+    secret: auth-google-id
+  - variable: AUTH_GOOGLE_SECRET
+    secret: auth-google-secret
+  - variable: SUPABASE_URL
+    secret: supabase-url
+  - variable: SUPABASE_SERVICE_ROLE_KEY
+    secret: supabase-service-role-key
+  - variable: ASAAS_API_KEY
+    secret: asaas-api-key
+  - variable: ASAAS_WEBHOOK_TOKEN
+    secret: asaas-webhook-token
