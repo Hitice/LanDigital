@@ -565,13 +565,21 @@ export function CurriculoBot() {
       setTimeout(() => inputRef.current?.focus(), 460);
     else if (step.kind === "textarea")
       setTimeout(() => textareaRef.current?.focus(), 460);
+  }, [stepId, step.kind]);
+
+  // Reinicia os valores padrão dos seletores ao entrar num passo novo. Feito
+  // durante a renderização (padrão recomendado do React), evitando setState em
+  // efeito e o re-render extra que ele causaria.
+  const prevStepId = useRef(stepId);
+  if (prevStepId.current !== stepId) {
+    prevStepId.current = stepId;
     if (step.kind === "month-year")   { setPickExpMonth("01"); setPickExpYear(String(new Date().getFullYear())); }
     if (step.kind === "year-pick")    { setPickEduYear(String(new Date().getFullYear())); }
     if (step.kind === "date-dmy")     { setPickDay("01"); setPickMonth("01"); setPickYear(String(new Date().getFullYear()-25)); setPickTyped(""); }
     if (step.kind === "cep")          { setCepInput(""); }
     if (step.kind === "multi-select") { setSelHab(new Set()); setCustomHab(""); }
     if (step.kind === "select-single"){ setPickSingle(step.options?.[0] ?? ""); }
-  }, [stepId, step.kind]);
+  }
 
   function doRestart() {
     const f = freshData();
@@ -964,7 +972,7 @@ export function CurriculoBot() {
                   const on = selHab.has(h.v);
                   return (
                     <button key={h.v}
-                      onClick={() => setSelHab(prev => { const n = new Set(prev); on ? n.delete(h.v) : n.add(h.v); return n; })}
+                      onClick={() => setSelHab(prev => { const n = new Set(prev); if (on) n.delete(h.v); else n.add(h.v); return n; })}
                       className={`text-left text-[13px] font-semibold px-3 py-2.5 rounded-xl border transition-colors leading-tight ${on ? "bg-primary text-white border-primary" : "bg-white border-border hover:border-primary/50"}`}>
                       {on ? "✓ " : ""}{h.l}
                     </button>

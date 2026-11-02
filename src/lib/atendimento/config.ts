@@ -2,8 +2,7 @@ import type { BotStep } from "@/components/SimpleBot";
 import { validateDoc, validateFullName, formatDoc } from "@/lib/validators";
 
 const FIELD_LABELS: Record<string, string> = {
-  nome: "Nome", cpf: "CPF", nascimento: "Nascimento",
-  rg: "RG", nome_mae: "Nome da mãe", nome_pai: "Nome do pai",
+  nome: "Nome", cpf: "CPF", nascimento: "Nascimento", contato: "Telefone",
 };
 
 // Formata valores específicos (CPF pontuado, data em DD/MM/AAAA).
@@ -26,8 +25,6 @@ export interface AtendimentoConfig {
   title: string;
   price: number;
   intro: string;
-  // "fila" = vira pedido processado pelo worker (RPA). "ficha" = gera PDF de dados local.
-  mode: "fila" | "ficha";
   steps: BotStep[];
 }
 
@@ -44,28 +41,12 @@ export const ATENDIMENTOS: Record<string, AtendimentoConfig> = {
     id: "2-via-cpf",
     title: "2ª via / Comprovante de CPF",
     price: 10.0,
-    mode: "ficha",
     intro: "Vou coletar seus dados da **2ª via / situação cadastral do CPF** e gerar uma ficha em PDF para você baixar.",
     steps: [
       { id: "nome", ask: "Qual é o seu **nome completo**?", kind: "text", placeholder: "Ex: Maria da Silva", validate: validateFullName },
       { id: "cpf", ask: "Qual é o seu **CPF**?", kind: "text", placeholder: "000.000.000-00", validate: validateDoc },
       { id: "nascimento", ask: "Qual é a sua **data de nascimento**?", kind: "date" },
       contato,
-    ],
-  },
-
-  "antecedentes-criminais": {
-    id: "antecedentes-criminais",
-    title: "Certidão de Antecedentes Criminais",
-    price: 15.0,
-    mode: "fila",
-    intro: "Vou coletar seus dados para **emitir a certidão de antecedentes criminais**. Após o pagamento, processamos e você baixa o PDF na página do pedido.",
-    steps: [
-      { id: "nome", ask: "Qual é o seu **nome completo**?", kind: "text", placeholder: "Ex: João Pereira", validate: validateFullName },
-      { id: "cpf", ask: "Qual é o seu **CPF**?", kind: "text", placeholder: "000.000.000-00", validate: validateDoc },
-      { id: "nascimento", ask: "Qual é a sua **data de nascimento**?", kind: "date" },
-      { id: "nome_mae", ask: "Qual é o **nome completo da sua mãe**?", kind: "text", placeholder: "Ex: Ana Pereira", validate: validateFullName },
-      { id: "nome_pai", ask: "Nome completo do seu **pai**? (opcional)", kind: "text", placeholder: "Ex: José Pereira", optional: true },
     ],
   },
 };

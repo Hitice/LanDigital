@@ -1,5 +1,5 @@
 import {
-  FileText, ShieldCheck, Landmark, Receipt, Car, TriangleAlert,
+  FileText, Landmark, Receipt, Car, TriangleAlert,
   FileBadge2, Home, Building2, Handshake, AlignLeft, ScanLine,
   Briefcase, FileSignature, Wrench, Fingerprint,
 } from "lucide-react";
@@ -131,17 +131,6 @@ export const services: Service[] = [
     price: 10.0,
     icon: FileText,
     href: "/atendimento/2-via-cpf",
-    category: "cpf",
-    mode: "assisted",
-    available: true,
-  },
-  {
-    id: "antecedentes-criminais",
-    title: "Certidão de Antecedentes",
-    description: "Informe seus dados e baixe uma ficha em PDF para a certidão de antecedentes.",
-    price: 15.0,
-    icon: ShieldCheck,
-    href: "/atendimento/antecedentes-criminais",
     category: "cpf",
     mode: "assisted",
     available: true,

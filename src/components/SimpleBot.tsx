@@ -93,7 +93,6 @@ export function SimpleBot({ intro, steps, finishLabel, onComplete }: SimpleBotPr
       setTimeout(() => inputRef.current?.focus(), 360);
     else if (step?.kind === "textarea")
       setTimeout(() => taRef.current?.focus(), 360);
-    setVal("");
   }, [index, step?.kind]);
 
   // Avança para o próximo passo (ou finaliza), aplicando um patch de respostas.
@@ -125,6 +124,7 @@ export function SimpleBot({ intro, steps, finishLabel, onComplete }: SimpleBotPr
     if (sending) return;
     if (index < 0) {   // confirma a intro
       setSend(true);
+      setVal("");
       setMsgs(p => [...p, { from: "user", text: raw }]);
       setIndex(0);
       setTimeout(() => {

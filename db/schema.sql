@@ -31,19 +31,6 @@ create table if not exists processed_webhooks (
   created_at timestamptz default now()
 );
 
--- Fila de pedidos processados pelo worker (ex: emissão de antecedentes na PF).
-create table if not exists pedidos (
-  id uuid primary key default gen_random_uuid(),
-  service_id text not null,                 -- ex: antecedentes-criminais
-  status text not null default 'pending',   -- pending | processing | done | error
-  dados jsonb not null,                     -- nome, cpf, nascimento, nome_mae, nome_pai
-  pdf_base64 text,                          -- PDF do documento quando done
-  erro text,                                -- mensagem de erro (PF_VALIDACAO) quando error
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-create index if not exists idx_pedidos_status on pedidos(status);
-
 -- UF do usuário, para serviços estaduais (ex: IPVA).
 -- alter table app_users add column if not exists uf text;
 

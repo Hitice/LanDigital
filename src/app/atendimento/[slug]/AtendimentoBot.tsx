@@ -1,64 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { SimpleBot, type BotAnswers } from "@/components/SimpleBot";
 import { PixModal } from "@/components/PixModal";
 import { ATENDIMENTOS } from "@/lib/atendimento/config";
 import { buildFichaPdf } from "@/lib/atendimento/pdf";
-import { CheckCircle2, Download, Loader2 } from "lucide-react";
+import { CheckCircle2, Download } from "lucide-react";
 
 // Recebe só o `slug`; a config (que contém funções de validação) é resolvida
 // aqui no cliente, evitando passar funções do servidor para o componente.
 export function AtendimentoBot({ slug }: { slug: string }) {
   const config = ATENDIMENTOS[slug];
-  const router = useRouter();
   const [answers, setAnswers] = useState<BotAnswers | null>(null);
   const [showPix, setShowPix] = useState(false);
   const [done, setDone] = useState(false);
-  const [enviando, setEnviando] = useState(false);
-  const [erro, setErro] = useState("");
 
   function handleComplete(data: BotAnswers) {
     setAnswers(data);
     setShowPix(true);
   }
 
-  // Após o pagamento: "fila" cria um pedido (worker emite); "ficha" gera o PDF local.
-  async function handlePaid(orderId: string) {
+  // Após o pagamento, gera a ficha em PDF localmente (jsPDF) e oferece o download.
+  function handlePaid() {
     if (!answers) return;
     setShowPix(false);
-
-    if (config.mode === "ficha") {
-      buildFichaPdf(config, answers).save();
-      setDone(true);
-      return;
-    }
-
-    setEnviando(true);
-    setErro("");
-    try {
-      const res = await fetch("/api/pedidos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ serviceId: config.id, dados: answers, orderId }),
-      });
-      if (!res.ok) throw new Error("falha");
-      const { id } = await res.json();
-      router.push(`/pedido/${id}`);
-    } catch {
-      setErro("Não consegui registrar seu pedido agora. Tente novamente.");
-      setEnviando(false);
-    }
-  }
-
-  if (enviando) {
-    return (
-      <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
-        <p className="mt-4 font-semibold">Registrando seu pedido...</p>
-      </div>
-    );
+    buildFichaPdf(config, answers).save();
+    setDone(true);
   }
 
   if (done) {
@@ -90,7 +57,6 @@ export function AtendimentoBot({ slug }: { slug: string }) {
           onConfirm={handlePaid}
         />
       )}
-      {erro && <div className="bg-red-50 text-red-700 text-sm text-center py-2 px-4">{erro}</div>}
       <SimpleBot
         intro={config.intro}
         steps={config.steps}

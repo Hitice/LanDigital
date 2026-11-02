@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { ServicesAccordion } from "@/components/ServicesAccordion";
 import { Monitor } from "lucide-react";
+import { BUSINESS, formatCnpj } from "@/lib/config";
 
 export default function Home() {
   return (
@@ -36,7 +37,7 @@ export default function Home() {
             <Monitor className="h-5 w-5 text-primary" />
             LanhouseDigital
           </div>
-          <p>Catech Serviços · CNPJ 39.914.870/0001-01 · Pagamentos via PIX</p>
+          <p>{BUSINESS.legalName} · CNPJ {formatCnpj(BUSINESS.cnpj)} · Pagamentos via PIX</p>
           <p>© {new Date().getFullYear()} Todos os direitos reservados</p>
         </div>
       </footer>
